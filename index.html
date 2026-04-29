@@ -3,31 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Loyola Thozhan | Official Campus Assistant</title>
+    <title>Loyola Thozhan | Campus Assistant</title>
     <style>
         :root { --navy: #002147; --gold: #B8860B; --light: #f8f9fa; }
         
-        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #d1d1d1; margin: 0; overflow: hidden; }
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #e0e0e0; margin: 0; overflow: hidden; }
 
         /* Floating Launcher */
         #launcher {
-            position: fixed; bottom: 20px; right: 20px;
+            position: fixed; bottom: 25px; right: 25px;
             width: 65px; height: 65px; background: var(--navy);
-            border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border-radius: 50%; box-shadow: 0 5px 20px rgba(0,0,0,0.3);
             cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 1001;
-            border: 2px solid var(--gold);
-            transition: transform 0.2s ease;
+            border: 2px solid var(--gold); transition: transform 0.2s;
         }
-        #launcher:active { transform: scale(0.9); }
         #launcher img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; }
 
         /* Chat Window */
         #chat-window {
-            position: fixed; bottom: 95px; right: 20px;
-            width: calc(100% - 40px); max-width: 400px; height: 75vh; max-height: 600px;
-            background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            position: fixed; bottom: 100px; right: 25px;
+            width: calc(100% - 40px); max-width: 400px; height: 80vh; max-height: 600px;
+            background: white; border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.25);
             display: none; flex-direction: column; overflow: hidden; z-index: 1000;
-            border: 1px solid rgba(0,0,0,0.1);
         }
 
         /* Header */
@@ -41,35 +38,34 @@
         .header-titles b { display: block; font-size: 14px; }
         .header-titles span { font-size: 10px; color: #4caf50; display: flex; align-items: center; gap: 4px; }
 
-        .controls { display: flex; gap: 5px; }
-        .ctrl-btn { background: rgba(255,255,255,0.15); border: none; color: white; padding: 5px 8px; border-radius: 4px; font-size: 10px; cursor: pointer; }
+        .controls button { background: rgba(255,255,255,0.15); border: none; color: white; padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer; margin-left: 5px; }
 
-        /* Messages Area with Watermark */
+        /* Messages Area with Logo Watermark */
         #messages { 
             flex: 1; padding: 15px; overflow-y: auto; 
             background: white url('https://zendna1994.github.io/loyolathozhan/LoyolaThozhan.jpg') no-repeat center;
-            background-size: 220px; background-attachment: local;
+            background-size: 200px; background-attachment: local;
             position: relative; display: flex; flex-direction: column; gap: 12px;
         }
         #messages::before {
-            content: ""; position: absolute; inset: 0; background: rgba(255, 255, 255, 0.92); z-index: 0;
+            content: ""; position: absolute; inset: 0; background: rgba(255, 255, 255, 0.93); z-index: 0;
         }
 
-        .msg { z-index: 1; max-width: 85%; padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.4; position: relative; animation: slideUp 0.3s ease; }
-        .bot { background: #f1f3f4; color: var(--navy); align-self: flex-start; border-bottom-left-radius: 2px; border-left: 3px solid var(--gold); }
+        .msg { z-index: 1; max-width: 85%; padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.4; animation: slideUp 0.3s ease; }
+        .bot { background: #f1f3f4; color: var(--navy); align-self: flex-start; border-bottom-left-radius: 2px; border-left: 4px solid var(--gold); }
         .user { background: var(--navy); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
 
         .speak-btn { cursor: pointer; margin-left: 8px; font-size: 14px; vertical-align: middle; }
 
         /* Suggestions */
-        .sug-box { z-index: 1; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
+        .sug-box { z-index: 1; display: flex; flex-wrap: wrap; gap: 6px; }
         .sug-btn { background: white; border: 1px solid var(--navy); color: var(--navy); padding: 6px 12px; border-radius: 18px; font-size: 12px; cursor: pointer; transition: 0.2s; }
         .sug-btn:hover { background: var(--navy); color: white; }
 
         /* Input Area */
-        #input-bar { padding: 12px; background: white; border-top: 1px solid #eee; display: flex; align-items: center; gap: 8px; }
+        #input-bar { padding: 12px; background: white; border-top: 1px solid #eee; display: flex; align-items: center; gap: 8px; z-index: 1; }
         #user-msg { flex: 1; border: 1px solid #ddd; padding: 10px 15px; border-radius: 20px; outline: none; font-size: 14px; }
-        .icon-btn { background: none; border: none; font-size: 20px; cursor: pointer; padding: 0 5px; color: var(--navy); }
+        .icon-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--navy); }
 
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -88,8 +84,8 @@
             </div>
         </div>
         <div class="controls">
-            <button class="ctrl-btn" onclick="clearChat()">Clear</button>
-            <button class="ctrl-btn" onclick="logout()">Logout</button>
+            <button onclick="clearChat()">Clear</button>
+            <button onclick="logout()">Logout</button>
         </div>
     </div>
 
@@ -98,37 +94,40 @@
     <div id="input-bar">
         <button class="icon-btn" onclick="startVoice()">🎤</button>
         <input type="text" id="user-msg" placeholder="Ask Thozhan..." onkeypress="if(event.key==='Enter') processInput()">
-        <button class="icon-btn" onclick="processInput()" style="font-size:16px; font-weight:bold;">➤</button>
+        <button class="icon-btn" onclick="processInput()">➤</button>
     </div>
 </div>
 
 <script>
+    const csvLinks = {
+        dept: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQOx1CY1ARp2KQySoW5NyAILv2Z_t8YUBURHY-TZUHmHt0DOsxqXMeH1MfbwJoUu46RzDxhoPNGN4gC/pub?gid=0&single=true&output=csv",
+        proc: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQOx1CY1ARp2KQySoW5NyAILv2Z_t8YUBURHY-TZUHmHt0DOsxqXMeH1MfbwJoUu46RzDxhoPNGN4gC/pub?gid=819567382&single=true&output=csv",
+        schol: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQOx1CY1ARp2KQySoW5NyAILv2Z_t8YUBURHY-TZUHmHt0DOsxqXMeH1MfbwJoUu46RzDxhoPNGN4gC/pub?gid=1093007465&single=true&output=csv",
+        dir: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQOx1CY1ARp2KQySoW5NyAILv2Z_t8YUBURHY-TZUHmHt0DOsxqXMeH1MfbwJoUu46RzDxhoPNGN4gC/pub?gid=1759326812&single=true&output=csv",
+        hist: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQOx1CY1ARp2KQySoW5NyAILv2Z_t8YUBURHY-TZUHmHt0DOsxqXMeH1MfbwJoUu46RzDxhoPNGN4gC/pub?gid=2120131688&single=true&output=csv"
+    };
+
     let step = 0;
     let user = { name: '', role: '', shift: '', deptNo: '' };
     const msgBox = document.getElementById('messages');
     const input = document.getElementById('user-msg');
 
-    // Toggle Chat Visibility
     function toggleChat() {
         const win = document.getElementById('chat-window');
         win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
         if (win.style.display === 'flex' && step === 0) runOnboarding();
     }
 
-    // Add Message to UI
     function addMsg(text, side) {
         const div = document.createElement('div');
         div.className = `msg ${side}`;
         let html = `<span>${text}</span>`;
-        if(side === 'bot') {
-            html += `<span class="speak-btn" onclick="readOut('${text.replace(/'/g, "\\'")}')">🔊</span>`;
-        }
+        if(side === 'bot') html += `<span class="speak-btn" onclick="readOut('${text.replace(/'/g, "\\'")}')">🔊</span>`;
         div.innerHTML = html;
         msgBox.appendChild(div);
         msgBox.scrollTop = msgBox.scrollHeight;
     }
 
-    // Show Selection Buttons
     function showSug(list) {
         const div = document.createElement('div');
         div.className = 'sug-box';
@@ -143,16 +142,15 @@
         msgBox.scrollTop = msgBox.scrollHeight;
     }
 
-    // Onboarding Sequence
     function runOnboarding() {
         const saved = localStorage.getItem('lt_profile');
         if(saved) {
             user = JSON.parse(saved);
             step = 100;
-            addMsg(`Vanakkam, ${user.name}! Welcome back. How can I help you?`, 'bot');
+            addMsg(`Vanakkam, ${user.name}! How can I help you today?`, 'bot');
             mainMenu();
         } else {
-            addMsg("Vanakkam! Welcome to Loyola Thozhan. To assist you, what is your Full Name?", 'bot');
+            addMsg("Vanakkam! Welcome to Loyola Thozhan. To start, what is your Full Name?", 'bot');
             step = 1;
         }
     }
@@ -166,95 +164,62 @@
     }
 
     function handleFlow(val) {
-        setTimeout(() => {
-            if(step === 1) {
-                user.name = val;
-                addMsg(`Thank you, ${val}. Please select your role:`, 'bot');
-                showSug(['Student', 'Staff', 'Guest']);
-                step = 2;
-            } else if(step === 2) {
-                user.role = val;
-                if(val === 'Student') {
-                    addMsg("Understood. Which shift are you in?", 'bot');
-                    showSug(['Shift 1', 'Shift 2']);
-                    step = 3;
-                } else { completeProfile(); }
-            } else if(step === 3) {
-                user.shift = val;
-                addMsg("Please enter your Department Number (e.g. 23-UAZ-001):", 'bot');
-                step = 4;
-            } else if(step === 4) {
-                user.deptNo = val;
-                completeProfile();
-            } else {
-                searchLogic(val);
-            }
+        setTimeout(async () => {
+            if(step === 1) { user.name = val; addMsg(`Hello ${val}. Please select your role:`, 'bot'); showSug(['Student', 'Staff', 'Guest']); step = 2; }
+            else if(step === 2) { user.role = val; if(val === 'Student') { addMsg("Which shift?", 'bot'); showSug(['Shift 1', 'Shift 2']); step = 3; } else { finish(); } }
+            else if(step === 3) { user.shift = val; addMsg("Enter Dept Number (e.g. 24-UAZ-050):", 'bot'); step = 4; }
+            else if(step === 4) { user.deptNo = val; finish(); }
+            else { await searchLogic(val); }
         }, 600);
     }
 
-    function completeProfile() {
-        localStorage.setItem('lt_profile', JSON.stringify(user));
-        step = 100;
-        addMsg("Profile saved professionally! What would you like to know?", 'bot');
-        mainMenu();
-    }
+    function finish() { localStorage.setItem('lt_profile', JSON.stringify(user)); step = 100; addMsg("Profile saved! Ask me anything.", 'bot'); mainMenu(); }
 
-    function mainMenu() {
-        showSug(['History', 'Who is Who', 'Scholarships', 'OD/ML Procedure', 'End Chat']);
-    }
+    function mainMenu() { showSug(['History', 'Scholarships', 'Who is Who', 'Bonafide Certificate', 'End Chat']); }
 
-    // Demo Data Logic (Replace with API fetch later)
-    function searchLogic(q) {
+    async function searchLogic(q) {
         const query = q.toLowerCase();
-        if(query.includes('history')) {
-            addMsg("Loyola College, founded in 1925, is a Jesuit institution. It has a rich heritage of excellence in Arts, Science, and Commerce.", 'bot');
-        } else if(query.includes('who is who')) {
-            addMsg("Principal: Rev. Dr. A. Louis Arockiaraj, S.J. For HOD details, visit your department office in the Jubilee/Main block.", 'bot');
-        } else if(query.includes('scholarship')) {
-            addMsg("For Govt/Management scholarships, visit the Scholarship Office near the Admin building with your income certificate.", 'bot');
-        } else if(query.includes('end chat')) {
-            addMsg("Closing Loyola Thozhan. Have a wonderful day!", 'bot');
-            setTimeout(toggleChat, 1500);
-        } else {
-            addMsg("Processing your request through the Loyola Database...", 'bot');
+        
+        if (query.includes("history")) {
+            const resp = await fetch(csvLinks.hist);
+            const data = await resp.text();
+            addMsg(data.split("\n")[1].split(",")[1], "bot");
+        } 
+        else if (query.includes("vp") || query.includes("who is who")) {
+            const resp = await fetch(csvLinks.dir);
+            const rows = (await resp.text()).split("\n").map(r => r.split(","));
+            let found = rows.filter(r => r[2].includes(user.shift) || r[2].includes("1 & 2"));
+            let reply = "Key Officials for your shift:\n";
+            found.slice(0,4).forEach(f => reply += `\n- ${f[0]}: ${f[1]} (${f[4]})`);
+            addMsg(reply, "bot");
         }
-        setTimeout(mainMenu, 1500);
+        else if (query.includes("bonafide") || query.includes("certificate")) {
+            const resp = await fetch(csvLinks.proc);
+            const rows = (await resp.text()).split("\n").map(r => r.split(","));
+            let item = rows.find(r => r[0].toLowerCase().includes("bonafide"));
+            if(item) addMsg(item[1].replace(/{Shift - 1}/g, user.shift) + "\n\nDocs: " + item[2], "bot");
+        }
+        else if (query.includes("end chat")) {
+            addMsg("Thank you! Closing...", "bot"); setTimeout(toggleChat, 1500);
+        }
+        else { addMsg("I'm looking into that. Try asking for 'Scholarships' or 'VP details'.", "bot"); }
+        setTimeout(mainMenu, 2000);
     }
 
-    // VOICE-TO-TEXT (Speech Recognition)
     function startVoice() {
         const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-        recognition.lang = 'en-IN';
-        recognition.start();
-        addMsg("Listening...", 'bot');
-        recognition.onresult = (e) => {
-            const result = e.results[0][0].transcript;
-            input.value = result;
-            processInput();
-        };
+        recognition.lang = 'en-IN'; recognition.start();
+        recognition.onresult = (e) => { input.value = e.results[0][0].transcript; processInput(); };
     }
 
-    // TEXT-TO-SPEECH (Read Aloud)
     function readOut(text) {
-        window.speechSynthesis.cancel(); // Stop current speech
+        window.speechSynthesis.cancel();
         const speech = new SpeechSynthesisUtterance(text);
-        speech.lang = 'en-IN';
-        window.speechSynthesis.speak(speech);
+        speech.lang = 'en-IN'; window.speechSynthesis.speak(speech);
     }
 
-    function clearChat() {
-        msgBox.innerHTML = '';
-        addMsg("Chat history cleared.", 'bot');
-        mainMenu();
-    }
-
-    function logout() {
-        if(confirm("Logout and clear profile?")) {
-            localStorage.removeItem('lt_profile');
-            location.reload();
-        }
-    }
+    function clearChat() { msgBox.innerHTML = ''; addMsg("Cleared.", 'bot'); mainMenu(); }
+    function logout() { if(confirm("Reset profile?")) { localStorage.clear(); location.reload(); } }
 </script>
-
 </body>
 </html>
