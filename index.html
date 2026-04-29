@@ -12,18 +12,18 @@
         /* Floating Launcher */
         #launcher {
             position: fixed; bottom: 20px; right: 20px;
-            width: 60px; height: 60px; background: var(--navy);
+            width: 65px; height: 65px; background: var(--navy);
             border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 1001;
             border: 2px solid var(--gold);
             transition: transform 0.2s ease;
         }
         #launcher:active { transform: scale(0.9); }
-        #launcher img { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; }
+        #launcher img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; }
 
-        /* Chat Window Container */
+        /* Chat Window */
         #chat-window {
-            position: fixed; bottom: 90px; right: 20px;
+            position: fixed; bottom: 95px; right: 20px;
             width: calc(100% - 40px); max-width: 400px; height: 75vh; max-height: 600px;
             background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.25);
             display: none; flex-direction: column; overflow: hidden; z-index: 1000;
@@ -42,7 +42,7 @@
         .header-titles span { font-size: 10px; color: #4caf50; display: flex; align-items: center; gap: 4px; }
 
         .controls { display: flex; gap: 5px; }
-        .ctrl-btn { background: rgba(255,255,255,0.15); border: none; color: white; padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer; }
+        .ctrl-btn { background: rgba(255,255,255,0.15); border: none; color: white; padding: 5px 8px; border-radius: 4px; font-size: 10px; cursor: pointer; }
 
         /* Messages Area with Watermark */
         #messages { 
@@ -51,31 +51,27 @@
             background-size: 220px; background-attachment: local;
             position: relative; display: flex; flex-direction: column; gap: 12px;
         }
-        /* Readable Overlay */
         #messages::before {
-            content: ""; position: absolute; inset: 0; background: rgba(255, 255, 255, 0.9); z-index: 0;
+            content: ""; position: absolute; inset: 0; background: rgba(255, 255, 255, 0.92); z-index: 0;
         }
 
-        .msg { z-index: 1; max-width: 85%; padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.4; position: relative; word-wrap: break-word; animation: slideUp 0.3s ease; }
+        .msg { z-index: 1; max-width: 85%; padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.4; position: relative; animation: slideUp 0.3s ease; }
         .bot { background: #f1f3f4; color: var(--navy); align-self: flex-start; border-bottom-left-radius: 2px; border-left: 3px solid var(--gold); }
         .user { background: var(--navy); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
 
+        .speak-btn { cursor: pointer; margin-left: 8px; font-size: 14px; vertical-align: middle; }
+
         /* Suggestions */
         .sug-box { z-index: 1; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
-        .sug-btn { background: white; border: 1px solid var(--navy); color: var(--navy); padding: 6px 12px; border-radius: 18px; font-size: 12px; cursor: pointer; }
+        .sug-btn { background: white; border: 1px solid var(--navy); color: var(--navy); padding: 6px 12px; border-radius: 18px; font-size: 12px; cursor: pointer; transition: 0.2s; }
         .sug-btn:hover { background: var(--navy); color: white; }
 
         /* Input Area */
         #input-bar { padding: 12px; background: white; border-top: 1px solid #eee; display: flex; align-items: center; gap: 8px; }
         #user-msg { flex: 1; border: 1px solid #ddd; padding: 10px 15px; border-radius: 20px; outline: none; font-size: 14px; }
-        #send-btn { background: none; border: none; color: var(--navy); font-weight: bold; cursor: pointer; padding: 5px; }
+        .icon-btn { background: none; border: none; font-size: 20px; cursor: pointer; padding: 0 5px; color: var(--navy); }
 
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* Mobile Tweaks */
-        @media (max-width: 480px) {
-            #chat-window { width: calc(100% - 20px); right: 10px; bottom: 80px; height: 80vh; }
-        }
     </style>
 </head>
 <body>
@@ -92,7 +88,7 @@
             </div>
         </div>
         <div class="controls">
-            <button class="ctrl-btn" onclick="clearHistory()">Clear</button>
+            <button class="ctrl-btn" onclick="clearChat()">Clear</button>
             <button class="ctrl-btn" onclick="logout()">Logout</button>
         </div>
     </div>
@@ -100,31 +96,39 @@
     <div id="messages"></div>
 
     <div id="input-bar">
-        <input type="text" id="user-msg" placeholder="Ask Thozhan..." onkeypress="if(event.key==='Enter') processText()">
-        <button id="send-btn" onclick="processText()">SEND</button>
+        <button class="icon-btn" onclick="startVoice()">🎤</button>
+        <input type="text" id="user-msg" placeholder="Ask Thozhan..." onkeypress="if(event.key==='Enter') processInput()">
+        <button class="icon-btn" onclick="processInput()" style="font-size:16px; font-weight:bold;">➤</button>
     </div>
 </div>
 
 <script>
     let step = 0;
-    let user = { name: '', role: '', shift: '', dept: '' };
+    let user = { name: '', role: '', shift: '', deptNo: '' };
     const msgBox = document.getElementById('messages');
     const input = document.getElementById('user-msg');
 
+    // Toggle Chat Visibility
     function toggleChat() {
         const win = document.getElementById('chat-window');
         win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
         if (win.style.display === 'flex' && step === 0) runOnboarding();
     }
 
+    // Add Message to UI
     function addMsg(text, side) {
         const div = document.createElement('div');
         div.className = `msg ${side}`;
-        div.innerText = text;
+        let html = `<span>${text}</span>`;
+        if(side === 'bot') {
+            html += `<span class="speak-btn" onclick="readOut('${text.replace(/'/g, "\\'")}')">🔊</span>`;
+        }
+        div.innerHTML = html;
         msgBox.appendChild(div);
         msgBox.scrollTop = msgBox.scrollHeight;
     }
 
+    // Show Selection Buttons
     function showSug(list) {
         const div = document.createElement('div');
         div.className = 'sug-box';
@@ -132,64 +136,66 @@
             const btn = document.createElement('button');
             btn.className = 'sug-btn';
             btn.innerText = item;
-            btn.onclick = () => { addMsg(item, 'user'); handleLogic(item); };
+            btn.onclick = () => { addMsg(item, 'user'); handleFlow(item); };
             div.appendChild(btn);
         });
         msgBox.appendChild(div);
         msgBox.scrollTop = msgBox.scrollHeight;
     }
 
+    // Onboarding Sequence
     function runOnboarding() {
-        const data = localStorage.getItem('lt_profile');
-        if(data) {
-            user = JSON.parse(data);
-            addMsg(`Vanakkam, ${user.name}! Welcome back to Loyola.`, 'bot');
+        const saved = localStorage.getItem('lt_profile');
+        if(saved) {
+            user = JSON.parse(saved);
+            step = 100;
+            addMsg(`Vanakkam, ${user.name}! Welcome back. How can I help you?`, 'bot');
             mainMenu();
         } else {
-            addMsg("Vanakkam! I am your Loyola Thozhan. To start, what is your Full Name?", 'bot');
+            addMsg("Vanakkam! Welcome to Loyola Thozhan. To assist you, what is your Full Name?", 'bot');
             step = 1;
         }
     }
 
-    function processText() {
+    function processInput() {
         const val = input.value.trim();
         if(!val) return;
         addMsg(val, 'user');
         input.value = '';
-        handleLogic(val);
+        handleFlow(val);
     }
 
-    function handleLogic(val) {
+    function handleFlow(val) {
         setTimeout(() => {
             if(step === 1) {
                 user.name = val;
-                addMsg(`Nice to meet you, ${val}. Please select your role:`, 'bot');
+                addMsg(`Thank you, ${val}. Please select your role:`, 'bot');
                 showSug(['Student', 'Staff', 'Guest']);
                 step = 2;
             } else if(step === 2) {
                 user.role = val;
                 if(val === 'Student') {
-                    addMsg("Which shift are you in?", 'bot');
+                    addMsg("Understood. Which shift are you in?", 'bot');
                     showSug(['Shift 1', 'Shift 2']);
                     step = 3;
-                } else { finishOnboarding(); }
+                } else { completeProfile(); }
             } else if(step === 3) {
                 user.shift = val;
-                addMsg("Enter your Department Code (e.g. 24-UAZ-050):", 'bot');
+                addMsg("Please enter your Department Number (e.g. 23-UAZ-001):", 'bot');
                 step = 4;
             } else if(step === 4) {
-                user.dept = val;
-                finishOnboarding();
+                user.deptNo = val;
+                completeProfile();
             } else {
-                searchDatabase(val);
+                searchLogic(val);
             }
-        }, 500);
+        }, 600);
     }
 
-    function finishOnboarding() {
+    function completeProfile() {
         localStorage.setItem('lt_profile', JSON.stringify(user));
-        step = 10; 
-        addMsg("Profile verified! How can I assist you today?", 'bot');
+        step = 100;
+        addMsg("Profile saved professionally! What would you like to know?", 'bot');
         mainMenu();
     }
 
@@ -197,36 +203,58 @@
         showSug(['History', 'Who is Who', 'Scholarships', 'OD/ML Procedure', 'End Chat']);
     }
 
-    function searchDatabase(q) {
+    // Demo Data Logic (Replace with API fetch later)
+    function searchLogic(q) {
         const query = q.toLowerCase();
         if(query.includes('history')) {
-            addMsg("Loyola College was founded in 1925 by the Society of Jesus (Jesuits). It has been a pioneer in higher education for over 100 years!", 'bot');
+            addMsg("Loyola College, founded in 1925, is a Jesuit institution. It has a rich heritage of excellence in Arts, Science, and Commerce.", 'bot');
         } else if(query.includes('who is who')) {
-            addMsg("Rector: Rev. Dr. Antony Robinson, SJ <br>Secretary and Correspond: Rev. Dr. D. Thomas Alexander SJ<br>Principal :Rev. Dr. A. Louis Arockiaraj, SJ", 'bot');
+            addMsg("Principal: Rev. Dr. A. Louis Arockiaraj, S.J. For HOD details, visit your department office in the Jubilee/Main block.", 'bot');
         } else if(query.includes('scholarship')) {
-            addMsg("Loyola offers Management & Govt scholarships. Visit the Loyola Student Support Service (LSSS) at CEF-01 (Commerce, Economis Block)", 'bot');
+            addMsg("For Govt/Management scholarships, visit the Scholarship Office near the Admin building with your income certificate.", 'bot');
         } else if(query.includes('end chat')) {
-            addMsg("Thank you for using Loyola Thozhan! Closing window...", 'bot');
+            addMsg("Closing Loyola Thozhan. Have a wonderful day!", 'bot');
             setTimeout(toggleChat, 1500);
         } else {
-            addMsg("I'm still learning about that. Let me check the college database...", 'bot');
+            addMsg("Processing your request through the Loyola Database...", 'bot');
         }
-        setTimeout(mainMenu, 1000);
+        setTimeout(mainMenu, 1500);
     }
 
-    function clearHistory() {
+    // VOICE-TO-TEXT (Speech Recognition)
+    function startVoice() {
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'en-IN';
+        recognition.start();
+        addMsg("Listening...", 'bot');
+        recognition.onresult = (e) => {
+            const result = e.results[0][0].transcript;
+            input.value = result;
+            processInput();
+        };
+    }
+
+    // TEXT-TO-SPEECH (Read Aloud)
+    function readOut(text) {
+        window.speechSynthesis.cancel(); // Stop current speech
+        const speech = new SpeechSynthesisUtterance(text);
+        speech.lang = 'en-IN';
+        window.speechSynthesis.speak(speech);
+    }
+
+    function clearChat() {
         msgBox.innerHTML = '';
         addMsg("Chat history cleared.", 'bot');
         mainMenu();
     }
 
     function logout() {
-        if(confirm("Logout and delete profile?")) {
+        if(confirm("Logout and clear profile?")) {
             localStorage.removeItem('lt_profile');
             location.reload();
         }
     }
 </script>
+
 </body>
 </html>
-
